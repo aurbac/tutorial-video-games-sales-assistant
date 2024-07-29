@@ -1,0 +1,76 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Video GamesSales Data API",
+    "description": "This API provides access to a PostgreSQL database containing video game sales data. It allows executing SQL queries against the database and retrieving the current date.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/runSQLQuery": {
+      "post": {
+        "description": "Executes the provided SQL query generated against the PostgreSQL database",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "SQLQuery": {
+                    "type": "string",
+                    "description": "SQL Query"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "SQL query results returned"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Aditional information about the SQL query results returned (optional)"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCurrentDate": {
+      "post": {
+        "description": "Use this function to get the current date and answer questions related to the time.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currentDate": {
+                      "type": "string",
+                      "description": "Current date"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
