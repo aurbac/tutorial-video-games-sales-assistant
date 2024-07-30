@@ -82,3 +82,16 @@ Use the following configuration:
 amplify publish
 ```
 Now you can test the application using the provided URL.
+
+### Sample questions
+
+- How can you help me?
+- What is the structure of the data?
+- Which developers tend to get the best reviews?
+- What were the best-selling games in the last 10 years?
+- What are the best-selling video game genres?
+- Give me the top 3 game publishers.
+- Give me the top 3 video games with the best reviews and the best sales.
+- Which is the year with the highest number of games released?
+- Which are the most popular consoles and why?
+- Give me a short summary and conclusion.
