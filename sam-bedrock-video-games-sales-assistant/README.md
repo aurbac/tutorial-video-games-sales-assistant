@@ -8,9 +8,7 @@
 
 ## SAM Deployment
 
-```bash
-sam init
-```
+In the SAM project folder execute the following commands:
 
 ```bash
 sam build
