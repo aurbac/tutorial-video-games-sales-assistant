@@ -294,9 +294,6 @@ Resources:
 
 
 
-
-
-
   SecurityGroupAssistant:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -463,13 +460,6 @@ Resources:
 
 
 
-
-
-
-
-
-
-
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -477,4 +467,10 @@ Outputs:
   VideoGamesSalesFunctionIamRole:
     Description: "Implicit IAM Role"
     Value: !GetAtt VideoGamesSalesFunctionRole.Arn
+  EndpointDatabaseAssistantwriter:
+    Description: "Endpoint DB instance writer"
+    Value: !GetAtt DatabaseAssistantwriter.Endpoint.Address
+  EndpointDatabaseAssistantdatabaseproxy:
+    Description: "Endpoint proxy"
+    Value: !GetAtt DatabaseAssistantdatabaseproxy.Endpoint
   
