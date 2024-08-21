@@ -49,57 +49,53 @@ def get_size(string):
 
 def get_query_results(sql_query):
 
+    connection = get_postgresql_connection()
+
+    if connection==False:
+        return { "error": "Something went wrong connecting to the database, ask the user to try again later."}
+
+    message = ""
+    cur = connection.cursor()
+    records = []
+    records_to_return = []
+    # Execute a SQL query
     try:
-        connection = get_postgresql_connection()
+        cur.execute(sql_query)
+        rows = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
+        
+        for item in rows:
+            record = {}
+            for x, value in enumerate(item):
+                if type(value) is Decimal:
+                    record[column_names[x]] = float(value)
+                elif isinstance(value, date):
+                    record[column_names[x]] = str(value)
+                else:
+                    record[column_names[x]] = value
+                
+            records.append(record)
 
-        if connection==False:
-            return { "error": "Something went wrong connecting to the database, ask the user to try again later."}
-
-        message = ""
-        cur = connection.cursor()
-        records = []
-        records_to_return = []
-        # Execute a SQL query
-        try:
-            cur.execute(sql_query)
-            rows = cur.fetchall()
-            column_names = [desc[0] for desc in cur.description]
+        if get_size(json.dumps(records))>24000:
             
-            for item in rows:
-                record = {}
-                for x, value in enumerate(item):
-                    if type(value) is Decimal:
-                        record[column_names[x]] = float(value)
-                    elif isinstance(value, date):
-                        record[column_names[x]] = str(value)
-                    else:
-                        record[column_names[x]] = value
-                    
-                records.append(record)
-
-            if get_size(json.dumps(records))>24000:
-                
-                for item in records:
-                    if get_size(json.dumps(records_to_return))<=24000:
-                        records_to_return.append(item)
-                message = "The data is too large, it has been truncated from " + str(len(records)) + " to " + str(len(records_to_return)) + " rows."
-            else:
-                records_to_return = records
-                
-        except (Exception, psycopg2.Error) as error:
-            print("Error executing SQL query:", error)
-            connection.rollback()  # Rollback the transaction if there's an error
-            return { "error" : error }
-        # Close the cursor and the connection
-        ##cur.close()
-        #conn.close()
-        if (message!=""):
-            return { "result": records_to_return, "message": message }
+            for item in records:
+                if get_size(json.dumps(records_to_return))<=24000:
+                    records_to_return.append(item)
+            message = "The data is too large, it has been truncated from " + str(len(records)) + " to " + str(len(records_to_return)) + " rows."
         else:
-            return { "result": records_to_return }
-    except:
-        print("Something went wrong")
-        return { "message": "Something went wrong consulting the database, ask the user to try again later." }
+            records_to_return = records
+            
+    except (Exception, psycopg2.Error) as error:
+        print("Error executing SQL query:", error)
+        connection.rollback()  # Rollback the transaction if there's an error
+        return { "error" : error.pgerror }
+    # Close the cursor and the connection
+    ##cur.close()
+    #conn.close()
+    if (message!=""):
+        return { "result": records_to_return, "message": message }
+    else:
+        return { "result": records_to_return }
 
 
 def lambda_handler(event, context):
@@ -133,7 +129,7 @@ def lambda_handler(event, context):
 
             result = data
         else:
-            result = []
+            result = { "message": "No SQL query provided to execute" }
 
     elif api_path == '/getCurrentDate':
         result = { "currentDate": datetime.now().strftime("%Y-%m-%d") }
