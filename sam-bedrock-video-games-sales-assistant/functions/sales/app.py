@@ -51,6 +51,10 @@ def get_query_results(sql_query):
 
     try:
         connection = get_postgresql_connection()
+
+        if connection==False:
+            return { "error": "Something went wrong connecting to the database, ask the user to try again later."}
+
         message = ""
         cur = connection.cursor()
         records = []
@@ -60,20 +64,10 @@ def get_query_results(sql_query):
             cur.execute(sql_query)
             rows = cur.fetchall()
             column_names = [desc[0] for desc in cur.description]
-            '''
-            print("--------- data")
-            print(rows)
-            print("--------- len")
-            print(len(rows))
-            print("--------- columns")
-            print(column_names)
-            '''
             
             for item in rows:
                 record = {}
                 for x, value in enumerate(item):
-                    #print(value)
-                    #print(x)
                     if type(value) is Decimal:
                         record[column_names[x]] = float(value)
                     elif isinstance(value, date):
@@ -89,22 +83,20 @@ def get_query_results(sql_query):
                     if get_size(json.dumps(records_to_return))<=24000:
                         records_to_return.append(item)
                 message = "The data is too large, it has been truncated from " + str(len(records)) + " to " + str(len(records_to_return)) + " rows."
-                
             else:
                 records_to_return = records
                 
         except (Exception, psycopg2.Error) as error:
-            print("Error executing SQL query 2:", error)
+            print("Error executing SQL query:", error)
             connection.rollback()  # Rollback the transaction if there's an error
-            return [{ "error" : "Error executing query."}]
-        
+            return { "error" : error }
         # Close the cursor and the connection
         ##cur.close()
         #conn.close()
         if (message!=""):
-            return { "data": records_to_return, "message": message }
+            return { "result": records_to_return, "message": message }
         else:
-            return { "data": records_to_return }
+            return { "result": records_to_return }
     except:
         print("Something went wrong")
         return { "message": "Something went wrong consulting the database, ask the user to try again later." }

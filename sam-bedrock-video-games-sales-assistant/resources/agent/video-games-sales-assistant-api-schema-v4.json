@@ -1,14 +1,14 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Video GamesSales Data API",
-    "description": "This API provides access to a PostgreSQL database containing video game sales data. It allows executing SQL queries against the database and retrieving the current date.",
+    "title": "Video Game Sales Data API",
+    "description": "This API provides access to a PostgreSQL database containing video game sales data. It allows you to run SQL queries against the database to retrieve results and respond to the user's questions.",
     "version": "1.0.0"
   },
   "paths": {
     "/runSQLQuery": {
       "post": {
-        "description": "Executes the provided SQL query generated against the PostgreSQL database",
+        "description": "Execute the SQL query designed for the PostgreSQL database to retrieve results and respond to the user's questions.",
         "requestBody": {
           "required": true,
           "content": {
@@ -34,12 +34,18 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "type": "array",
-                      "description": "SQL query results returned"
-                    },
-                    "message": {
-                      "type": "string",
-                      "description": "Aditional information about the SQL query results returned (optional)"
+                      "type": "object",
+                      "description": "SQL query results returned",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "description": "The data for the SQL query results returned"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Aditional information about the SQL query results returned (optional)"
+                        }
+                      }
                     }
                   }
                 }
@@ -51,7 +57,7 @@
     },
     "/getCurrentDate": {
       "post": {
-        "description": "Use this function to get the current date and answer questions related to the time.",
+        "description": "Use this function to get the current date and answer questions related to the dates.",
         "responses": {
           "200": {
             "description": "Successful response",
