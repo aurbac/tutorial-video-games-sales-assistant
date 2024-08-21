@@ -54,6 +54,7 @@ psql --host=<aurora_postgresql_writer_endpoint_db> --port=5432 --username=<user_
 
 ```sql
 CREATE TABLE video_games_sales_units (
+    img TEXT,
     title TEXT,
     console TEXT,
     genre TEXT,
@@ -65,7 +66,8 @@ CREATE TABLE video_games_sales_units (
     jp_sales NUMERIC(4,2),
     pal_sales NUMERIC(4,2),
     other_sales NUMERIC(4,2),
-    release_date DATE
+    release_date DATE,
+    last_update DATE
 );
 ```
 
